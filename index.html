@@ -6,8 +6,34 @@
     <title>Api de Dragon Ball</title>
 </head>
 <body>
-    <header></header>
-    <main></main>
+    <header class="header">
+      <img src="./img/logo_dragonballapi.webp" alt="Dragon Ball Super API" class="header__logo" />
+      <h1 class="header__title">Dragon Ball — Personajes</h1>
+    </header>
+
+    <main class="main">
+      <!-- Filtro por raza -->
+      <section class="seccion">
+        <h2 class="seccion__titulo">Filtrar por raza</h2>
+        <div class="filtro">
+          <select id="select-raza" class="filtro__select">
+            <option value="">Cargando razas...</option>
+          </select>
+          <button id="btn-mostrar" class="btn">Mostrar</button>
+        </div>
+      </section>
+
+      <!-- Sección 2: Tabla -->
+      <section id="seccion-tabla">
+        <div id="contenedor-tabla"></div>
+      </section>
+
+      <!--  Detalle transformaciones  -->
+      <section id="seccion-detalle">
+        <div id="contenedor-detalle"></div>
+      </section>
+    </main>
+    <footer></footer>
     <footer></footer>
 </body>
 </html>
