@@ -17,6 +17,7 @@
   --radius-lg:  0.875rem;
 
   --font: 'Segoe UI', sans-serif;
+  scroll-behavior: smooth;
 }
 
 *,
