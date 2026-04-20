@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <tr>
           <th>#</th>
           <th>Nombre</th>
-          <th>Ki</th>
+          <th>Ki Base</th>
           <th>Ki Máx</th>
           <th>Género</th>
           <th>Imagen</th>
@@ -273,7 +273,9 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="detalle__filtro">
       <select id="select-transformacion" class="filtro__select">
         <option value="-1">${personaje.name} (base)</option>
-        ${transformacionesActuales.map((t, i) => `
+        ${transformacionesActuales
+          .map(
+            (t, i) => `
           <option value="${i}">${t.name}</option>
         `,
           )
@@ -282,7 +284,6 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   `
       : "";
-
 
     contenedorDetalle.innerHTML = "";
 
@@ -303,9 +304,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       <div class="detalle__derecha">
         <h2 class="detalle__nombre" id="detalle-nombre">${personaje.name}</h2>
-        <p class="detalle__dato">
+        <p class="detalle__dato" >
           <span class="detalle__label">Ki:</span>
-          ${personaje.ki || "—"}
+          <span id="detalle-ki">${personaje.ki || "—"}</span>
         </p>
         <p class="detalle__dato">
           <span class="detalle__label">Max Ki:</span>
@@ -342,11 +343,13 @@ document.addEventListener("DOMContentLoaded", () => {
   function cambiarTransformacion(idx, personaje) {
     const imagen = document.getElementById("detalle-imagen");
     const nombre = document.getElementById("detalle-nombre");
+    const ki = document.getElementById("detalle-ki");
 
     if (idx == -1) {
       imagen.src = personaje.image;
       imagen.alt = personaje.name;
       nombre.textContent = personaje.name;
+      ki.textContent = personaje.ki || "—";
       return;
     }
 
@@ -356,6 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
     imagen.src = t.image;
     imagen.alt = t.name;
     nombre.textContent = t.name;
+    ki.textContent     = t.ki || "—";
   }
 
   cargarRazas();
