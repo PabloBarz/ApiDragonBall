@@ -72,7 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       todosLosPersonajes = await fetchTodos("characters");
-      console.log(todosLosPersonajes);
 
       if (todosLosPersonajes.length === 0) {
         select.innerHTML =
@@ -179,9 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
            />
         </td>
         <td class="tabla__celda">
-          <button class="btn btn--small" data-id="${p.id}"">
-            Ver
-          </button>
+          <a href="#seccion-detalle" class="btn btn--small" data-id="${p.id}">Ver</a>
         </td>
       </tr>
     `,
@@ -233,16 +230,148 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add("body--sin-scroll");
   }
 
+  // ================================
+  // DETALLE
+  // ================================
+
+  async function verDetalle(id) {
+    const seccionDetalle = document.getElementById("seccion-detalle");
+    const contenedorDetalle = document.getElementById("contenedor-detalle");
+
+    seccionDetalle.classList.add("seccion");
+    contenedorDetalle.innerHTML = `
+    <p class="mensaje-vacio">
+      <i class="fa-solid fa-spinner fa-spin"></i> Cargando...
+    </p>
+  `;
+
+    try {
+      const respuesta = await fetch(
+        `https://dragonball-api.com/api/characters/${id}`,
+      );
+
+      if (!respuesta.ok) throw new Error(`Error HTTP: ${respuesta.status}`);
+
+      const personaje = await respuesta.json();
+      transformacionesActuales = personaje.transformations || [];
+
+      mostrarDetalle(personaje);
+    } catch (error) {
+      console.error("Error al cargar detalle:", error);
+      contenedorDetalle.innerHTML = `
+      <p class="mensaje-vacio">Error al cargar el detalle.</p>
+    `;
+    }
+  }
+
+  function mostrarDetalle(personaje) {
+    const contenedorDetalle = document.getElementById("contenedor-detalle");
+    const tieneTransformaciones = transformacionesActuales.length > 0;
+
+    const selectHTML = tieneTransformaciones
+      ? `
+    <div class="detalle__filtro">
+      <select id="select-transformacion" class="filtro__select">
+        <option value="-1">${personaje.name} (base)</option>
+        ${transformacionesActuales.map((t, i) => `
+          <option value="${i}">${t.name}</option>
+        `,
+          )
+          .join("")}
+      </select>
+    </div>
+  `
+      : "";
+
+
+    contenedorDetalle.innerHTML = "";
+
+    contenedorDetalle.insertAdjacentHTML(
+      "beforeend",
+      `
+    <div class="detalle">
+
+      <div class="detalle__izquierda">
+        ${selectHTML}
+        <img
+          src="${personaje.image}"
+          alt="${personaje.name}"
+          class="detalle__imagen"
+          id="detalle-imagen"
+        />
+      </div>
+
+      <div class="detalle__derecha">
+        <h2 class="detalle__nombre" id="detalle-nombre">${personaje.name}</h2>
+        <p class="detalle__dato">
+          <span class="detalle__label">Ki:</span>
+          ${personaje.ki || "—"}
+        </p>
+        <p class="detalle__dato">
+          <span class="detalle__label">Max Ki:</span>
+          ${personaje.maxKi || "—"}
+        </p>
+        <p class="detalle__dato">
+          <span class="detalle__label">Descripción:</span>
+          ${personaje.description || "—"}
+        </p>
+        <p class="detalle__dato">
+          <span class="detalle__label">Afiliación:</span>
+          ${personaje.affiliation || "—"}
+        </p>
+        <p class="detalle__dato">
+          <span class="detalle__label">Planeta de origen:</span>
+          ${personaje.originPlanet.name || "—"}
+        </p>
+      </div>
+
+    </div>
+  `,
+    );
+
+    if (tieneTransformaciones) {
+      document
+        .getElementById("select-transformacion")
+        .addEventListener("change", (e) => {
+          const idx = e.target.value;
+          cambiarTransformacion(idx, personaje);
+        });
+    }
+  }
+
+  function cambiarTransformacion(idx, personaje) {
+    const imagen = document.getElementById("detalle-imagen");
+    const nombre = document.getElementById("detalle-nombre");
+
+    if (idx == -1) {
+      imagen.src = personaje.image;
+      imagen.alt = personaje.name;
+      nombre.textContent = personaje.name;
+      return;
+    }
+
+    const t = transformacionesActuales[idx];
+    if (!t) return;
+
+    imagen.src = t.image;
+    imagen.alt = t.name;
+    nombre.textContent = t.name;
+  }
+
   cargarRazas();
 
-  document.getElementById("modal-cerrar").addEventListener("click", () => toggleModal());
-  document.getElementById("modal-overlay").addEventListener("click", () => toggleModal());
+  document
+    .getElementById("modal-cerrar")
+    .addEventListener("click", () => toggleModal());
+  document
+    .getElementById("modal-overlay")
+    .addEventListener("click", () => toggleModal());
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       const modal = document.getElementById("modal");
       const estaAbierto = modal.classList.contains("modal--activo");
 
-      if (!estaAbierto) return; 
+      if (!estaAbierto) return;
 
       toggleModal();
     }
@@ -258,10 +387,4 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!e.target.value) return;
     mostrarTabla(e.target.value);
   });
-
-  async function verDetalle(id) {
-    const respuesta = await fetch(
-      `https://dragonball-api.com/api/characters/${id}`,
-    );
-  }
 });
