@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       todosLosPersonajes = await fetchTodos("characters");
+      console.log(todosLosPersonajes)
 
       if (todosLosPersonajes.length === 0) {
         select.innerHTML =
@@ -72,13 +73,16 @@ document.addEventListener("DOMContentLoaded", () => {
         Unknown: "Desconocido",
       };
 
-      const razas = [...new Set(todosLosPersonajes.map((p) => p.race).filter(Boolean))];    
+      const razas = [
+        ...new Set(todosLosPersonajes.map((p) => p.race).filter(Boolean)),
+      ];
 
       select.innerHTML = '<option value="">— Elige una raza —</option>';
       razas.forEach((raza) => {
-        const traduccion = traducciones[raza] || raza; 
-        select.insertAdjacentHTML("beforeend",
-        `
+        const traduccion = traducciones[raza] || raza;
+        select.insertAdjacentHTML(
+          "beforeend",
+          `
             <option value="${raza}">${traduccion}</option>
         `,
         );
@@ -92,16 +96,92 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // ================================
+  // Mostrar tabla de personajes
+  // ================================
+
+  function mostrarTabla(raza) {
+    const seccionTabla = document.getElementById("seccion-tabla");
+    const contenedor = document.getElementById("contenedor-tabla");
+    const seccionDetalle = document.getElementById("seccion-detalle");
+    const contenedorDetalle = document.getElementById("contenedor-detalle");
+
+    seccionDetalle.classList.remove("seccion");
+    contenedorDetalle.innerHTML = "";
+
+    const personajesFiltrados = todosLosPersonajes.filter((p) => p.race === raza,);
+
+    if (personajesFiltrados.length === 0) {
+      seccionTabla.classList.add("seccion");
+      contenedor.innerHTML = `
+      <p class="mensaje-vacio">No se encontraron personajes de esta raza.</p>
+    `;
+      return;
+    }
+
+    seccionTabla.classList.add("seccion");
+    contenedor.innerHTML = "";
+
+    contenedor.insertAdjacentHTML(
+      "beforeend",
+      `
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Ki</th>
+          <th>Ki Máx</th>
+          <th>Género</th>
+          <th>Imagen</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpo-tabla"></tbody>
+    </table>
+  `,
+    );
+
+    const cuerpo = document.getElementById("cuerpo-tabla");
+
+    personajesFiltrados.forEach((p) => {
+      cuerpo.insertAdjacentHTML(
+        "beforeend",
+        `
+      <tr class="tabla__fila">
+        <td class="tabla__celda">${p.id}</td>
+        <td class="tabla__celda tabla__celda--nombre">${p.name}</td>
+        <td class="tabla__celda">${p.ki === "unknown" ? "Desconocido" : p.ki}</td>
+        <td class="tabla__celda">${p.maxKi === "unknown" ? "Desconocido" : p.maxKi}</td>
+        <td class="tabla__celda">${p.gender === "unknown" ? "Desconocido" : p.gender}</td>
+        <td class="tabla__celda">
+          <img
+            src="${p.image}"
+            alt="${p.name}"
+            class="tabla__imagen"
+          />
+        </td>
+        <td class="tabla__celda">
+          <button class="btn btn--small"${p.id}">
+            Ver
+          </button>
+        </td>
+      </tr>
+    `,
+      );
+    });
+  }
+
   cargarRazas();
 
   document.getElementById("btn-mostrar").addEventListener("click", () => {
     const raza = document.getElementById("select-raza").value;
-    if (!raza) return; 
-    console.log("raza seleccionada:", raza);
+    if (!raza) return;
+    mostrarTabla(raza);
   });
 
   document.getElementById("select-raza").addEventListener("change", (e) => {
     if (!e.target.value) return;
-    console.log("raza cambiada:", e.target.value);
+    mostrarTabla(e.target.value);
   });
 });
