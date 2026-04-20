@@ -2,6 +2,29 @@ document.addEventListener("DOMContentLoaded", () => {
   let todosLosPersonajes = [];
   let transformacionesActuales = [];
 
+  const traducciones = {
+    razas: {
+      Human: "Humano",
+      Saiyan: "Saiyajin",
+      Namekian: "Namekiano",
+      Android: "Androide",
+      Majin: "Majin",
+      "Frieza Race": "Raza de Freezer",
+      "Jiren Race": "Raza de Jiren",
+      Angel: "Ángel",
+      God: "Dios",
+      Evil: "Maligno",
+      Nucleico: "Nucleico",
+      "Nucleico benigno": "Nucleico Benigno",
+      Unknown: "Desconocido",
+    },
+    generos: {
+      Male: "Masculino",
+      Female: "Femenino",
+      Unknown: "Desconocido",
+    },
+  };
+
   // ================================
   // Cargar todos los personajes
   // ================================
@@ -49,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       todosLosPersonajes = await fetchTodos("characters");
-      console.log(todosLosPersonajes)
+      console.log(todosLosPersonajes);
 
       if (todosLosPersonajes.length === 0) {
         select.innerHTML =
@@ -57,29 +80,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const traducciones = {
-        Human: "Humano",
-        Saiyan: "Saiyajin",
-        Namekian: "Namekiano",
-        Android: "Androide",
-        Majin: "Majin",
-        "Frieza Race": "Raza de Freezer",
-        "Jiren Race": "Raza de Jiren",
-        Angel: "Ángel",
-        God: "Dios",
-        Evil: "Maligno",
-        Nucleico: "Nucleico",
-        "Nucleico benigno": "Nucleico Benigno",
-        Unknown: "Desconocido",
-      };
-
       const razas = [
         ...new Set(todosLosPersonajes.map((p) => p.race).filter(Boolean)),
       ];
 
       select.innerHTML = '<option value="">— Elige una raza —</option>';
       razas.forEach((raza) => {
-        const traduccion = traducciones[raza] || raza;
+        const traduccion = traducciones.razas[raza] || raza;
         select.insertAdjacentHTML(
           "beforeend",
           `
@@ -109,7 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
     seccionDetalle.classList.remove("seccion");
     contenedorDetalle.innerHTML = "";
 
-    const personajesFiltrados = todosLosPersonajes.filter((p) => p.race === raza,);
+    const personajesFiltrados = todosLosPersonajes.filter(
+      (p) => p.race === raza,
+    );
 
     if (personajesFiltrados.length === 0) {
       seccionTabla.classList.add("seccion");
@@ -153,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <td class="tabla__celda tabla__celda--nombre">${p.name}</td>
         <td class="tabla__celda">${p.ki === "unknown" ? "Desconocido" : p.ki}</td>
         <td class="tabla__celda">${p.maxKi === "unknown" ? "Desconocido" : p.maxKi}</td>
-        <td class="tabla__celda">${p.gender === "unknown" ? "Desconocido" : p.gender}</td>
+        <td class="tabla__celda">${traducciones.generos[p.gender] || p.gender || "—"}</td>
         <td class="tabla__celda">
           <img
             src="${p.image}"
@@ -162,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
           />
         </td>
         <td class="tabla__celda">
-          <button class="btn btn--small"${p.id}">
+          <button class="btn btn--small" data-id="${p.id}"">
             Ver
           </button>
         </td>
@@ -171,6 +180,15 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     });
   }
+
+  const botones = document.querySelectorAll(".btn--small[data-id]");
+
+  botones.forEach((boton) => {
+    boton.addEventListener("click", (e) => {
+      const id = e.target.dataset.id;
+      verDetalle(id);
+    });
+  });
 
   cargarRazas();
 
@@ -184,4 +202,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!e.target.value) return;
     mostrarTabla(e.target.value);
   });
+
+  async function verDetalle(id) {
+    const respuesta = await fetch(
+      `https://dragonball-api.com/api/characters/${id}`,
+    );
+  }
 });
