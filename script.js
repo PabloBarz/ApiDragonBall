@@ -164,11 +164,19 @@ document.addEventListener("DOMContentLoaded", () => {
         <td class="tabla__celda">${p.maxKi === "unknown" ? "Desconocido" : p.maxKi}</td>
         <td class="tabla__celda">${traducciones.generos[p.gender] || p.gender || "—"}</td>
         <td class="tabla__celda">
+          <button
+            class="btn-imagen"
+            data-imagen="${p.image}"
+            data-nombre="${p.name}"
+            aria-label="Ver imagen de ${p.name}">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
           <img
             src="${p.image}"
             alt="${p.name}"
             class="tabla__imagen"
-          />
+            onerror="this.style.display='none'"
+           />
         </td>
         <td class="tabla__celda">
           <button class="btn btn--small" data-id="${p.id}"">
@@ -179,18 +187,66 @@ document.addEventListener("DOMContentLoaded", () => {
     `,
       );
     });
+
+    const botonesVer = document.querySelectorAll(".btn--small[data-id]");
+    botonesVer.forEach((boton) => {
+      boton.addEventListener("click", (e) => {
+        const id = e.target.dataset.id;
+        verDetalle(id);
+      });
+    });
+
+    botonImagen = document.querySelectorAll(".btn-imagen[data-imagen]");
+    botonImagen.forEach((boton) => {
+      boton.addEventListener("click", (e) => {
+        const imagen = e.currentTarget.dataset.imagen;
+        const nombre = e.currentTarget.dataset.nombre;
+        toggleModal(imagen, nombre);
+      });
+    });
   }
 
-  const botones = document.querySelectorAll(".btn--small[data-id]");
+  // ================================
+  // MODAL
+  // ================================
 
-  botones.forEach((boton) => {
-    boton.addEventListener("click", (e) => {
-      const id = e.target.dataset.id;
-      verDetalle(id);
-    });
-  });
+  function toggleModal(imagen = "", nombre = "") {
+    const modal = document.getElementById("modal");
+    const modalImagen = document.getElementById("modal-imagen");
+    const modalNombre = document.getElementById("modal-nombre");
+
+    const estaAbierto = modal.classList.contains("modal--activo");
+
+    if (estaAbierto) {
+      modal.classList.remove("modal--activo");
+      document.body.classList.remove("body--sin-scroll");
+      setTimeout(() => {
+        modalImagen.src = "";
+      }, 300);
+      return;
+    }
+
+    modalImagen.src = imagen;
+    modalImagen.alt = nombre;
+    modalNombre.textContent = nombre;
+    modal.classList.add("modal--activo");
+    document.body.classList.add("body--sin-scroll");
+  }
 
   cargarRazas();
+
+  document.getElementById("modal-cerrar").addEventListener("click", () => toggleModal());
+  document.getElementById("modal-overlay").addEventListener("click", () => toggleModal());
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const modal = document.getElementById("modal");
+      const estaAbierto = modal.classList.contains("modal--activo");
+
+      if (!estaAbierto) return; 
+
+      toggleModal();
+    }
+  });
 
   document.getElementById("btn-mostrar").addEventListener("click", () => {
     const raza = document.getElementById("select-raza").value;

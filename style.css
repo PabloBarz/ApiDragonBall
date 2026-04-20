@@ -215,13 +215,11 @@ img {
   color: var(--color-primary);
 }
 
+
 .tabla__imagen {
-  width: 2.5rem;
-  height: 2.5rem;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
-  border: 0.0625rem solid var(--color-border);
+  display: none;
 }
+
 
 .btn--small {
   padding: 0.35rem 0.85rem;
@@ -239,6 +237,18 @@ img {
    RESPONSIVE TABLA
 ================================ */
 @media (max-width: 48rem) {
+
+  .btn-imagen {
+  display: none;
+  }
+
+  .tabla__imagen, tabla__celda--imagen {
+  display: block;
+  width: 4rem;
+  height: 4rem;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+ }
 
   .tabla thead {
     display: none;
@@ -267,14 +277,14 @@ img {
 
   .tabla__celda:nth-child(6) {
     grid-column: 1;
-    grid-row: 1 / 5;
+    grid-row: 1/6;
     display: flex;
     align-items: center;
   }
 
   .tabla__imagen {
-    width: 4rem;
-    height: 4rem;
+    width: 100%;
+    height: 100%;
     border-radius: var(--radius-md);
   }
 
@@ -329,4 +339,88 @@ img {
     color: var(--color-primary);
     font-weight: 600;
   }
+}
+
+/* ================================
+   MODAL
+================================ */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal--activo {
+  display: flex;
+}
+
+.modal__overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+.modal__contenido {
+  position: relative;
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: var(--color-surface);
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-lg);
+  max-width: 90vw;
+  animation: modal-entrar 0.25s ease;
+}
+
+@keyframes modal-entrar {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal__cerrar {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 1.1rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s;
+}
+
+.modal__cerrar:hover {
+  color: var(--color-danger);
+}
+
+.modal__imagen {
+  width: clamp(12rem, 40vw, 20rem);
+  height: clamp(12rem, 40vw, 20rem);
+  object-fit: contain;
+  border-radius: var(--radius-md);
+}
+
+.modal__nombre {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-align: center;
+}
+
+.body--sin-scroll {
+  overflow: hidden;
 }

@@ -1,15 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Api de Dragon Ball</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
     <header class="header">
-      <img src="./img/logo_dragonballapi.webp" alt="Dragon Ball Super API" class="header__logo" />
+      <img
+        src="./img/logo_dragonballapi.webp"
+        alt="Dragon Ball Super API"
+        class="header__logo"
+      />
       <h1 class="header__title">Dragon Ball — Personajes</h1>
     </header>
 
@@ -35,6 +43,18 @@
         <div id="contenedor-detalle"></div>
       </section>
     </main>
+
+    <!-- Modal imagen -->
+    <div id="modal" class="modal">
+      <div class="modal__overlay" id="modal-overlay"></div>
+      <div class="modal__contenido">
+        <button class="modal__cerrar" id="modal-cerrar" aria-label="Cerrar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img src="" alt="" id="modal-imagen" class="modal__imagen" />
+        <p id="modal-nombre" class="modal__nombre"></p>
+      </div>
+    </div>
     <footer></footer>
-</body>
+  </body>
 </html>
